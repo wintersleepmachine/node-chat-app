@@ -16,7 +16,7 @@ io.on("connection", (socket) => {
     console.log(("New user connected"))
 
     socket.on("createMessage", function(message){
-        console.log("New message from chrome console",message)
+        console.log("createMessage", message)
         io.emit("newMessage", {
             from: message.from,
             text: message.text,
