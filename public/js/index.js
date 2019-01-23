@@ -6,7 +6,7 @@ socket.on("connect", function(){
 
 })
 
-socket.on("newMessage", function(message){
+socket.on("createMessage", function(message){
     console.log("Recieved new Message", message)
 })
 
