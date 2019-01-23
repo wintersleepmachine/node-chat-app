@@ -15,27 +15,22 @@ app.use(express.static(publicPath))
 io.on("connection", (socket) => {
     console.log(("New user connected"))
 
-    socket.on("newMessage", function(message){
-        console.log(message)
+    socket.on("createMessage", function(message){
+        console.log("New message from chrome console",message)
+        io.emit("newMessage", {
+            from: message.from,
+            text: message.text,
+            createdAt: new Date().getTime()
+        })
     })
     
-    socket.emit("newMessage", {
-        from: "Andrew",
-        text: "Hey can you meet up at 6?",
-        createdAt: 1234
-    })
+
 
     socket.on("disconnect", () =>{
         console.log("client has disconnected")
     })
 
     
-})
-
-
-
-io.on("newMessage", function(message){
-    console.log("From the console of chrome", message)
 })
 
 
