@@ -8,7 +8,8 @@ const app = express()
 let server = http.createServer(app)
 let io = socketIO(server)
 app.use(express.static(publicPath))
-const {generateMessage} = require("./utils/message.js")
+const {generateMessage, generateLocationMessage} = require("./utils/message.js")
+
 
 
 //
@@ -17,7 +18,6 @@ io.on("connection", (socket) => {
     console.log(("New user connected"))
     
     socket.emit("newMessage", generateMessage("Admin", "Welcome to the chatapp"))
-
     socket.broadcast.emit("newMessage", generateMessage("Admin", "New user has joined"))
 
 
@@ -28,6 +28,10 @@ io.on("connection", (socket) => {
         callback("This is from sever")
 
     })
+
+    socket.on("createLocationMessage", (coords) => {
+        io.emit("newLocationMessage", generateLocationMessage("Admin", coords.latitude, coords.longitude))
+    })
     
     
     socket.on("disconnect", () =>{
@@ -35,6 +39,8 @@ io.on("connection", (socket) => {
     })
 
 })
+
+
 
 
 
