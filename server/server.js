@@ -8,6 +8,7 @@ const app = express()
 let server = http.createServer(app)
 let io = socketIO(server)
 app.use(express.static(publicPath))
+const {generateMessage} = require("./utils/message.js")
 
 
 //
@@ -15,27 +16,15 @@ app.use(express.static(publicPath))
 io.on("connection", (socket) => {
     console.log(("New user connected"))
     
-    socket.emit("newMessage", {
-        from: "Admin",
-        text: "Welome to the chat app",
-        createdAt: new Date().getTime()
-    })
+    socket.emit("newMessage", generateMessage("Admin", "Welcome to the chatapp"))
 
-    socket.broadcast.emit("newMessage", {
-        from: "Admin",
-        text: "New user has joined",
-        createdAt: new Date().getTime()
-    })
+    socket.broadcast.emit("newMessage", generateMessage("Admin", "New user has joined"))
 
 
 
     socket.on("createMessage", function(message){
         console.log("createMessage", message)
-        io.emit("newMessage", {
-            from: message.from,
-            text: message.text,
-            createdAt: new Date().getTime()
-        })
+        io.emit("newMessage", generateMessage(message.from, message.text))
 
     })
     
@@ -45,7 +34,6 @@ io.on("connection", (socket) => {
     })
 
 })
-
 
 
 
