@@ -1,6 +1,6 @@
 let socket = io();
 
-function scrollToBottom(){
+function scrollToBottom(){ //Function to scroll user to bottom if new message appears
     //Selectors
     let messages = jQuery("#messages")
     let newMessage = messages.children("li:last-child")
@@ -18,7 +18,16 @@ function scrollToBottom(){
 }
 
 socket.on("connect", function(){
-    console.log("Connected to server")
+    let params = jQuery.deparam(window.location.search)
+    
+    socket.emit("join", params, function(err){
+        if(err){
+            alert(err)
+            window.location.href = "/"
+        }else{
+            console.log("No error")
+        }
+    })
 })
 
 socket.on("disconnect", function(){
@@ -26,8 +35,19 @@ socket.on("disconnect", function(){
 })
 
 
-socket.on("newMessage", function(message){
+socket.on("updateUserList", function(users){
+    let ol = jQuery("<ol></ol>")
 
+    users.forEach(function(user){
+        ol.append(jQuery("<li></li>").text(user))
+    })
+
+    jQuery("#users").html(ol)
+})
+
+
+socket.on("newMessage", function(message){
+    
     let formattedTime = moment(message.createdAt).format("h:mm a")
     let template = jQuery("#message-template").html();
     let html = Mustache.render(template, {
@@ -39,6 +59,7 @@ socket.on("newMessage", function(message){
     jQuery("#messages").append(html)
 
     scrollToBottom();
+    
 
     
     // console.log("newMessage", message)
